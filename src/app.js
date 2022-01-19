@@ -16,6 +16,8 @@ const User = require("./models/User");
   }
 })();
 
+app.set("port", process.env.PORT || 4000);
+
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname + "/view/index.html"));
 });
