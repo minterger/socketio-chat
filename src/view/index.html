@@ -8,29 +8,52 @@
     <title>Chat App</title>
   </head>
   <body>
-    <div class="flex flex-col sm:flex-row h-screen">
+    <div class="flex flex-col sm:flex-row h-screen bg-slate-200">
       <!-- Sidebar title and login -->
-      <aside class="sticky top-0 sm:static sm:h-full bg-slate-900 shadow-xl md:w-1/4 text-white p-2" id="sidebar">
-        <h1 class="text-center text-xl border-b font-semibold py-2">Chat App</h1>
+      <aside
+        class="sticky top-0 sm:static sm:h-full bg-slate-900 shadow-xl sm:w-2/5 lg:w-1/4 text-white p-2"
+        id="sidebar"
+      >
+        <h1 class="text-center text-xl border-b font-semibold py-2">
+          Chat App
+        </h1>
         <form id="login" class="my-2 hidden">
           <span class="block text-center font-semibold mb-2">SignIn</span>
-          <input type="text" class="rounded-lg p-2 w-full text-slate-600 placeholder:text-slate-400" placeholder="Username" />
-          <button class="rounded-lg p-2 w-full bg-slate-500 hover:bg-slate-600 transition-colors duration-300 mt-2">Login</button>
+          <input
+            type="text"
+            class="rounded-lg p-2 w-full text-slate-600 placeholder:text-slate-400"
+            placeholder="Username"
+          />
+          <button
+            class="rounded-lg p-2 w-full bg-slate-500 hover:bg-slate-600 transition-colors duration-300 mt-2"
+          >
+            Login
+          </button>
         </form>
 
         <div id="user" class="mt-2 block flex justify-between items-center">
           <span>Username: <strong>Not Defined</strong></span>
-          <button id="logout" class="rounded-lg py-2 px-3 bg-slate-500 hover:bg-slate-600 transition-colors duration-300 mr-0 ml-auto">Logout </button>
+          <button
+            id="logout"
+            class="rounded-lg py-2 px-3 bg-slate-500 hover:bg-slate-600 transition-colors duration-300 mr-0 ml-auto"
+          >
+            Logout
+          </button>
         </div>
 
         <!-- list connected users -->
-        <div id="connected" class="max-h-32 overflow-y-auto sm:max-h-full">
-          <h2 class="text-center text-xl border-b font-semibold mt-2 py-2">Connected Users</h2>
-          <ul id="users" class="list-reset flex flex-col">
+        <div id="connected">
+          <h2 class="text-center text-xl border-b font-semibold mt-2 py-2">
+            Connected Users
+          </h2>
+          <ul
+            id="users"
+            class="list-reset max-h-28 sm:max-h-min overflow-y-auto"
+          >
             <!-- <li class="flex justify-between py-2">
-              <span class="leading-loose">Username: <strong>Not Defined</strong></span>
-              <button class="rounded-lg p-2 bg-slate-500">Send Message</button>
-            </li> -->
+                <span class="leading-loose">Username: <strong>Not Defined</strong></span>
+                <button class="rounded-lg p-2 bg-slate-500">Send Message</button>
+              </li> -->
           </ul>
         </div>
       </aside>
@@ -38,7 +61,10 @@
       <!-- Chat -->
       <div class="col-span-3 flex flex-1 flex-col">
         <!-- container chat messages -->
-        <div class="flex-1 p-2 overflow-y-scroll h-full max-h-min" id="chat-messages"></div>
+        <div
+          class="flex-1 p-2 overflow-y-scroll h-full max-h-min"
+          id="chat-messages"
+        ></div>
 
         <!-- conteiner chat form -->
         <div
@@ -52,7 +78,9 @@
               placeholder="type message"
               class="flex-1 border border-slate-600 text-slate-600 rounded-lg mr-2 p-2"
             />
-            <button class="py-2 px-5 bg-slate-500 hover:bg-slate-600 transition-colors duration-300 rounded-lg text-white">
+            <button
+              class="py-2 px-5 bg-slate-500 hover:bg-slate-600 transition-colors duration-300 rounded-lg text-white"
+            >
               Send
             </button>
           </form>
