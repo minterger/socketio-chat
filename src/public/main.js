@@ -19,8 +19,8 @@ if (!username) {
   login.classList.remove("hidden");
   chat.classList.add("opacity-0");
 } else {
-  user.querySelector("strong").textContent = username;
   socket.emit("user-connected", username);
+  user.querySelector("strong").textContent = username;
 }
 
 // login event listener
@@ -50,7 +50,7 @@ logout.addEventListener("click", (e) => {
 
 // socket event listeners
 socket.on("chat", (data) => {
-  chat.innerHTML += `<div class="flex bg-slate-500 p-2 rounded-lg text-white justify-between mb-2">
+  chat.innerHTML += `<div class="flex bg-slate-500 p-2 rounded-lg shadow-xl text-white justify-between mb-2">
     <div class="flex-1">
       <p class="text-md mb-1">${data.username}</p>
       <p class="text-sm">${data.message}</p>
@@ -67,7 +67,7 @@ socket.on("chat", (data) => {
 socket.on("previousMessages", (messages) => {
   chat.innerHTML = "";
   messages.forEach((message) => {
-    chat.innerHTML += `<div class="flex bg-slate-500 p-2 rounded-lg text-white justify-between mb-2">
+    chat.innerHTML += `<div class="flex bg-slate-500 p-2 rounded-lg shadow-xl text-white justify-between mb-2">
         <div class="flex-1">
           <p class="text-md mb-1">${message.username}</p>
           <p class="text-sm">${message.message}</p>
