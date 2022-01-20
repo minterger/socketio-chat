@@ -55,7 +55,7 @@ socket.on("chat", (data) => {
       <p class="text-md font-semibold mb-1">${data.username}</p>
       <p class="text-sm">${data.message}</p>
     </div>
-    <div class="w-10 text-right">
+    <div class="w-24 text-right">
       <p class="text-sm">${data.date}</p>
     </div>
   </div>`;
@@ -72,7 +72,7 @@ socket.on("previousMessages", (messages) => {
           <p class="text-md font-semibold mb-1">${message.username}</p>
           <p class="text-sm">${message.message}</p>
         </div>
-        <div class="w-10 text-right">
+        <div class="w-24 text-right">
           <p class="text-sm">${message.date}</p>
           </div>
       </div>`;
@@ -101,8 +101,10 @@ inputForm.addEventListener("submit", (e) => {
   const time = {
     hours: date.getHours() < 10 ? "0" + date.getHours() : date.getHours(),
     minutes: date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes(),
-    day: date.getDay(),
-    month: date.getMonth(),
+    //obtener dia del mes
+    day: date.getDate() < 10 ? "0" + date.getDate() : date.getDate(),
+    //obtener mes del año
+    month: date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1,
   }
 
   // send message to server if message is not empty and username is set

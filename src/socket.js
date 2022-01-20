@@ -10,7 +10,7 @@ const io = new Server(server);
 io.on("connection", async (socket) => {
   console.log("made socket connection", socket.id);
 
-  const messages = await Message.find().sort({ date: 1 }).limit(10);
+  const messages = await Message.find().sort({ createdAt: 1 }).limit(10);
   socket.emit("previousMessages", messages);
 
   socket.on("chat", async (data) => {
