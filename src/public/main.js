@@ -1,7 +1,11 @@
-const socket = io();
-
 // Username login storange
 let username = localStorage.getItem("username");
+
+const socket = io({
+  extraHeaders: {
+    username: username ? username : "", // if username is not null, set it to the extraHeaders
+  }
+});
 
 // dom elements
 const login = document.getElementById("login");
@@ -19,7 +23,6 @@ if (!username) {
   login.classList.remove("hidden");
   chat.classList.add("opacity-0");
 } else {
-  socket.emit("user-connected", username);
   user.querySelector("strong").textContent = username;
 }
 

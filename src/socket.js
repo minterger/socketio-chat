@@ -10,6 +10,27 @@ const io = new Server(server);
 io.on("connection", async (socket) => {
   console.log("made socket connection", socket.id);
 
+  const username = socket.handshake.headers.username;
+  if (username) {
+    console.log("connected user", username);
+    const findUser = await User.findOneAndUpdate(
+      { username },
+      { socket_id: socket.id, status: "online" }
+    );
+    if (!findUser) {
+      const user = new User({
+        username,
+        socket_id: socket.id,
+        status: "online",
+      });
+      await user.save();
+    }
+
+    const usersOnline = await User.find({ status: "online" });
+    socket.emit("connected-users", usersOnline);
+    socket.broadcast.emit("connected-users", usersOnline);
+  }
+
   const messages = await Message.find().sort({ createdAt: 1 }).limit(10);
   socket.emit("previousMessages", messages);
 
@@ -25,8 +46,8 @@ io.on("connection", async (socket) => {
   });
 
   socket.on("user-connected", async (username) => {
-    const findUser = await User.findOne({ username });
     console.log("connected user", username);
+    const findUser = await User.findOne({ username });
     if (!findUser) {
       const user = new User({
         username,
@@ -39,18 +60,19 @@ io.on("connection", async (socket) => {
       findUser.socket_id = socket.id;
       await findUser.save();
     }
-    
+
     const usersOnline = await User.find({ status: "online" });
     socket.emit("connected-users", usersOnline);
     socket.broadcast.emit("connected-users", usersOnline);
   });
 
   socket.on("user-disconnect", async () => {
-    const findUser = await User.findOne({ socket_id: socket.id });
+    const findUser = await User.findOneAndUpdate(
+      { socket_id: socket.id },
+      { status: "offline" }
+    );
     if (findUser) {
       console.log("user disconnected", findUser.username);
-      findUser.status = "offline";
-      await findUser.save();
     }
 
     const usersOnline = await User.find({ status: "online" });
@@ -59,11 +81,12 @@ io.on("connection", async (socket) => {
   });
 
   socket.on("disconnect", async () => {
-    const findUser = await User.findOne({ socket_id: socket.id });
+    const findUser = await User.findOneAndUpdate(
+      { socket_id: socket.id },
+      { status: "offline" }
+    );
     if (findUser) {
       console.log("disconnected", findUser.username);
-      findUser.status = "offline";
-      await findUser.save();
     }
 
     const usersOnline = await User.find({ status: "online" });
