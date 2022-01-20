@@ -52,7 +52,7 @@ logout.addEventListener("click", (e) => {
 socket.on("chat", (data) => {
   chat.innerHTML += `<div class="flex bg-slate-500 p-2 rounded-lg shadow-xl text-white justify-between mb-2">
     <div class="flex-1">
-      <p class="text-md mb-1">${data.username}</p>
+      <p class="text-md font-semibold mb-1">${data.username}</p>
       <p class="text-sm">${data.message}</p>
     </div>
     <div class="w-10 text-right">
@@ -69,7 +69,7 @@ socket.on("previousMessages", (messages) => {
   messages.forEach((message) => {
     chat.innerHTML += `<div class="flex bg-slate-500 p-2 rounded-lg shadow-xl text-white justify-between mb-2">
         <div class="flex-1">
-          <p class="text-md mb-1">${message.username}</p>
+          <p class="text-md font-semibold mb-1">${message.username}</p>
           <p class="text-sm">${message.message}</p>
         </div>
         <div class="w-10 text-right">
@@ -86,8 +86,8 @@ socket.on("connected-users", (usersOnline) => {
   usersOnline.forEach((user) => {
     users.innerHTML += `
       <li id="${user.id}" class="flex justify-between pt-2">
-        <span class="leading-loose">User: <strong>${user.username}</strong></span>
-        <span class="leading-loose">Connected</span>
+        <strong>${user.username}</strong>
+        <span class="text-green-500">Connected</span>
       </li>`;
   });
 });
