@@ -101,6 +101,8 @@ inputForm.addEventListener("submit", (e) => {
   const time = {
     hours: date.getHours() < 10 ? "0" + date.getHours() : date.getHours(),
     minutes: date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes(),
+    day: date.getDay(),
+    month: date.getMonth(),
   }
 
   // send message to server if message is not empty and username is set
@@ -108,7 +110,7 @@ inputForm.addEventListener("submit", (e) => {
     socket.emit("chat", {
       message: msgTtim,
       username,
-      date: `${time.hours}:${time.minutes}`,
+      date: `${time.day}/${time.month} - ${time.hours}:${time.minutes}`,
     });
     message.value = "";
   }
