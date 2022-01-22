@@ -4,18 +4,14 @@ const app = express();
 const morgan = require("morgan");
 const User = require("./models/User");
 
-// (async () => {
-//   try {
-//     const users = await User.find({ status: "online" });
-//     users.forEach((user) => {
-//       user.status = "offline";
-//       user.save();
-//     });
-//     console.log("disconnected all users");
-//   } catch (error) {
-//     console.log(error);
-//   }
-// })();
+(async () => {
+  try {
+    await User.updateMany({status: 'online'}, {$set: {status: 'offline'}});
+    console.log("disconnected all users");
+  } catch (error) {
+    console.log(error);
+  }
+})();
 
 app.set("port", process.env.PORT || 4000);
 
