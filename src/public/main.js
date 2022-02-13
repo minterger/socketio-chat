@@ -2,10 +2,10 @@
 let username = localStorage.getItem("username");
 
 const socket = io({
-  extraHeaders: {
-    username: username ? username : "", // if username is not null, set it to the extraHeaders
-  }
+  autoConnect: false,
 });
+
+socket.onAny((event, ...args) => {  console.log(event, args);})
 
 // dom elements
 const login = document.getElementById("login");
@@ -24,7 +24,23 @@ if (!username) {
   chat.classList.add("opacity-0");
 } else {
   user.querySelector("strong").textContent = username;
+  socket.auth = { username };
+  socket.connect();
 }
+
+socket.on("connect_error", (err) => {
+  if (err.message === "invalid username") {
+    username = "";
+    login.classList.remove("hidden");
+    user.classList.add("hidden");
+    connected.classList.add("hidden");
+    chat.classList.add("opacity-0");
+    localStorage.removeItem("username");
+    socket.off("connect_error");
+    // disconect socket
+    socket.disconnect();
+  }
+});
 
 // login event listener
 login.addEventListener("submit", (e) => {
@@ -36,7 +52,8 @@ login.addEventListener("submit", (e) => {
   chat.classList.remove("opacity-0");
   user.querySelector("strong").textContent = username;
   localStorage.setItem("username", username);
-  socket.emit("user-connected", username);
+  socket.auth = { username };
+  socket.connect();
 });
 
 // logout event listener
@@ -48,7 +65,7 @@ logout.addEventListener("click", (e) => {
   connected.classList.add("hidden");
   chat.classList.add("opacity-0");
   localStorage.removeItem("username");
-  socket.emit("user-disconnect", username);
+  socket.disconnect();
 });
 
 // socket event listeners
@@ -103,12 +120,16 @@ inputForm.addEventListener("submit", (e) => {
   const date = new Date();
   const time = {
     hours: date.getHours() < 10 ? "0" + date.getHours() : date.getHours(),
-    minutes: date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes(),
+    minutes:
+      date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes(),
     //obtener dia del mes
     day: date.getDate() < 10 ? "0" + date.getDate() : date.getDate(),
     //obtener mes del año
-    month: date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1,
-  }
+    month:
+      date.getMonth() + 1 < 10
+        ? "0" + (date.getMonth() + 1)
+        : date.getMonth() + 1,
+  };
 
   // send message to server if message is not empty and username is set
   if (msgTtim && username) {

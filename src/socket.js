@@ -1,35 +1,37 @@
 const { Server } = require("socket.io");
 const app = require("./app");
 const http = require("http");
-const User = require("./models/User");
 const Message = require("./models/Message");
 
 const server = http.createServer(app);
 const io = new Server(server);
 
+io.use((socket, next) => {
+  const { username } = socket.handshake.auth;
+  
+  if (!username) return next(new Error("invalid username"));
+
+  for (let [id, socket] of io.of("/").sockets) {
+    if (username === socket.username) return next(new Error("invalid username"))
+  }
+
+  socket.username = username;
+  next();
+});
+
 io.on("connection", async (socket) => {
   console.log("made socket connection", socket.id);
 
-  const username = socket.handshake.headers.username;
-  if (username) {
-    console.log("connected user", username);
-    const findUser = await User.findOneAndUpdate(
-      { username },
-      { socket_id: socket.id, status: "online" }
-    );
-    if (!findUser) {
-      const user = new User({
-        username,
-        socket_id: socket.id,
-        status: "online",
-      });
-      await user.save();
-    }
-
-    const usersOnline = await User.find({ status: "online" });
-    socket.emit("connected-users", usersOnline);
-    socket.broadcast.emit("connected-users", usersOnline);
+  const users = [];
+  for (let [id, socket] of io.of("/").sockets) {
+    users.push({
+      id,
+      username: socket.username,
+    });
   }
+
+  socket.emit("connected-users", users);
+  socket.broadcast.emit("connected-users", users);
 
   const messages = await Message.find().sort({ createdAt: 1 }).limit(10);
   socket.emit("previousMessages", messages);
@@ -45,54 +47,18 @@ io.on("connection", async (socket) => {
     await message.save();
   });
 
-  socket.on("user-connected", async (username) => {
-    console.log("connected user", username);
-    const findUser = await User.findOne({ username });
-    if (!findUser) {
-      const user = new User({
-        username,
-        socket_id: socket.id,
-        status: "online",
+  socket.on("disconnect", () => {
+    console.log("user disconnected", socket.id);
+    const users = [];
+    for (let [id, socket] of io.of("/").sockets) {
+      users.push({
+        id,
+        username: socket.username,
       });
-      await user.save();
-    } else {
-      findUser.status = "online";
-      findUser.socket_id = socket.id;
-      await findUser.save();
     }
-
-    const usersOnline = await User.find({ status: "online" });
-    socket.emit("connected-users", usersOnline);
-    socket.broadcast.emit("connected-users", usersOnline);
+    socket.broadcast.emit("connected-users", users);
   });
 
-  socket.on("user-disconnect", async () => {
-    const findUser = await User.findOneAndUpdate(
-      { socket_id: socket.id },
-      { status: "offline" }
-    );
-    if (findUser) {
-      console.log("user disconnected", findUser.username);
-    }
-
-    const usersOnline = await User.find({ status: "online" });
-    socket.emit("connected-users", usersOnline);
-    socket.broadcast.emit("connected-users", usersOnline);
-  });
-
-  socket.on("disconnect", async () => {
-    const findUser = await User.findOneAndUpdate(
-      { socket_id: socket.id },
-      { status: "offline" }
-    );
-    if (findUser) {
-      console.log("disconnected", findUser.username);
-    }
-
-    const usersOnline = await User.find({ status: "online" });
-    socket.emit("connected-users", usersOnline);
-    socket.broadcast.emit("connected-users", usersOnline);
-  });
 });
 
 module.exports = { server };
