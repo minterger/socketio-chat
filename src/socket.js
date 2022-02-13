@@ -20,7 +20,7 @@ io.use((socket, next) => {
 });
 
 io.on("connection", async (socket) => {
-  console.log("made socket connection", socket.id);
+  console.log("made socket connection", socket.username, socket.id);
 
   const users = [];
   for (let [id, socket] of io.of("/").sockets) {
