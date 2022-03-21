@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "tailwind": "tailwindcss -i ./src/view/index.css -o ./src/public/main.css --watch",
+    "build": "tailwindcss -i ./src/view/index.css -o ./src/public/main.css -m",
     "start": "node src/index.js"
   },
   "keywords": [],

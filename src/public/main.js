@@ -5,7 +5,9 @@ const socket = io({
   autoConnect: false,
 });
 
-socket.onAny((event, ...args) => {  console.log(event, args);})
+socket.onAny((event, ...args) => {
+  console.log(event, args);
+});
 
 // dom elements
 const login = document.getElementById("login");
@@ -68,37 +70,32 @@ logout.addEventListener("click", (e) => {
   socket.disconnect();
 });
 
-// socket event listeners
-socket.on("chat", (data) => {
-  chat.innerHTML += `<div class="flex bg-slate-500 p-2 rounded-lg shadow-xl text-white justify-between mb-2">
-    <div class="flex-1">
-      <p class="text-md font-semibold mb-1">${data.username}</p>
-      <p class="text-sm">${data.message}</p>
+const appendMessage = (message) => {
+  chat.innerHTML += `
+  <div class="flex bg-slate-500 p-2 rounded-lg shadow-xl text-white justify-between mb-2">
+    <div class="flex-1 w-3/4">
+      <p class="text-md font-semibold mb-1">${message.username}</p>
+      <p class="text-sm text-ellipsis overflow-hidden w-full">${message.message}</p>
     </div>
-    <div class="w-24 text-right">
-      <p class="text-sm">${data.date}</p>
+    <div class="w-1/4 text-right">
+      <p class="text-sm">${message.date}</p>
     </div>
   </div>`;
 
   // scroll to bottom
   chat.scrollTop = chat.scrollHeight;
+};
+
+// socket event listeners
+socket.on("chat", (data) => {
+  appendMessage(data);
 });
 
 socket.on("previousMessages", (messages) => {
   chat.innerHTML = "";
   messages.forEach((message) => {
-    chat.innerHTML += `<div class="flex bg-slate-500 p-2 rounded-lg shadow-xl text-white justify-between mb-2">
-        <div class="flex-1">
-          <p class="text-md font-semibold mb-1">${message.username}</p>
-          <p class="text-sm">${message.message}</p>
-        </div>
-        <div class="w-24 text-right">
-          <p class="text-sm">${message.date}</p>
-          </div>
-      </div>`;
+    appendMessage(message);
   });
-  // scroll to bottom
-  chat.scrollTop = chat.scrollHeight;
 });
 
 socket.on("connected-users", (usersOnline) => {
